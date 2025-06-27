@@ -1,75 +1,215 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cuckoo Hashing</title>
   <style>
-    table {
-      border-collapse: collapse;
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #a18cd1, #fbc2eb);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    table, th, td {
-      border: 1px solid black;
-      padding: 20px;
+    h1 {
+      color: #fff;
+      margin: 40px 0 20px;
+      font-size: 40px;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
     }
-    .cuckoo{
-        width: 100px;
-        height: 100px;
-        border-collapse: collapse;
-        border:0;
-        margin: none;
-        border-style: hidden;
-    
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      max-width: 1200px;
+      width: 90%;
+    }
+
+    .form-section {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    label {
+      font-weight: 600;
+      margin-right: 10px;
+      color: #333;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 100px;
+      border: 2px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 18px;
+      margin: 5px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+      background: linear-gradient(45deg, #ff6b6b, #f06595);
+      color: white;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(45deg, #f06595, #ff6b6b);
+      transform: scale(1.05);
+    }
+
+    .tables-container {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 30px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 320px;
+      background: #ffffff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    caption {
+      background-color: #6c5ce7;
+      color: white;
+      font-size: 18px;
+      padding: 10px;
+      font-weight: bold;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    th {
+      background-color: #81ecec;
+      color: #2d3436;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f1f2f6;
+    }
+
+    tr:hover {
+      background-color: #ffeaa7;
+    }
+
+    #output {
+      margin-top: 30px;
+      padding: 15px 20px;
+      background-color: #ffeaa7;
+      border-left: 5px solid #fd79a8;
+      color: #2d3436;
+      font-size: 18px;
+      font-weight: 500;
+      border-radius: 6px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+      animation: fadeIn 0.8s ease;
+    }
+
+    /* 🎞️ Animation Classes */
+    .fade {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .highlight {
+      animation: highlight 1s ease-in-out;
+    }
+
+    .bounce {
+      animation: bounceIn 0.7s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes highlight {
+      0% { background-color: #ffeaa7; }
+      50% { background-color: #fdcb6e; }
+      100% { background-color: inherit; }
+    }
+
+    @keyframes bounceIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+
+    @media (max-width: 768px) {
+      .tables-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      table {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
-  <h1 style="text-align: center;">Cuckoo Hashing</h1>
 
-  
+  <h1>Cuckoo Hashing Visualizer</h1>
 
-  <div id="output"></div>
-  <center>
-<table class="cuckoo">
-    <tr>
-        <td class="cuckoo">
-            <table>
-                <caption>Hash Table 1</caption>
-                <tr>
-                  <th>Index</th>
-                  <th>Key</th>
-                </tr>
-                <tbody id="table1"></tbody>
-              </table>
+  <div class="container">
+    <div class="form-section">
+      <label for="key">Enter Key:</label>
+      <input type="text" id="key" />
+      <button onclick="insert()">Insert</button>
+      <button onclick="lookup()">Lookup</button>
+      <button onclick="deleteKey()">Delete</button>
+    </div>
 
-        </td>
-        <td class="cuckoo">
-           
-            <label for="key">Key:</label>
-            <input type="text" id="key" />
-            <button onclick="insert()">Insert</button>
-            <button onclick="lookup()">Lookup</button>
-            <button onclick="deleteKey()">Delete</button>
-        </td>
-        <td class="cuckoo">
-            <table>
-                <caption>Hash Table 2</caption>
-                <tr>
-                  <th>Index</th>
-                  <th>Key</th>
-                </tr>
-                <tbody id="table2"></tbody>
-              </table>
+    <div class="tables-container">
+      <table>
+        <caption>Hash Table 1</caption>
+        <thead>
+          <tr>
+            <th>Index</th>
+            <th>Key</th>
+          </tr>
+        </thead>
+        <tbody id="table1"></tbody>
+      </table>
 
-        </td>
-    </tr>
-</table>
-</center>
-  
+      <table>
+        <caption>Hash Table 2</caption>
+        <thead>
+          <tr>
+            <th>Index</th>
+            <th>Key</th>
+          </tr>
+        </thead>
+        <tbody id="table2"></tbody>
+      </table>
+    </div>
 
- 
+    <div id="output"></div>
+  </div>
 
   <script>
-    // Cuckoo Hashing implementation
     let tableSize = 0;
     let table1 = [];
     let table2 = [];
@@ -83,17 +223,20 @@
     }
 
     function hash1(key) {
-      // Hash function 1
       return key % tableSize;
     }
 
     function hash2(key) {
-      // Hash function 2
-      return Math.floor(key / tableSize)  % tableSize;
+      return Math.floor(key / tableSize) % tableSize;
     }
 
     function insert() {
       const key = parseInt(document.getElementById("key").value);
+      if (isNaN(key)) {
+        output("Please enter a valid number.");
+        return;
+      }
+
       let currentKey = key;
       let hashValue1 = hash1(currentKey);
       let hashValue2 = hash2(currentKey);
@@ -101,56 +244,69 @@
       for (let i = 0; i < tableSize; i++) {
         if (table1[hashValue1] === null) {
           table1[hashValue1] = currentKey;
-          updateTable("table1", table1);
-          output("Inserted key " + currentKey + " at index " + hashValue1 + " in table 1.");
+          updateTable("table1", table1, hashValue1);
+          output(`Inserted key ${currentKey} at index ${hashValue1} in table 1.`);
           return;
         } else if (table2[hashValue2] === null) {
           table2[hashValue2] = currentKey;
-          updateTable("table2", table2);
-          output("Inserted key " + currentKey + " at index " + hashValue2 + " in table 2.");
+          updateTable("table2", table2, hashValue2);
+          output(`Inserted key ${currentKey} at index ${hashValue2} in table 2.`);
           return;
-        } 
+        }
 
+        [currentKey, table1[hashValue1]] = [table1[hashValue1], currentKey];
         hashValue1 = hash1(currentKey);
         hashValue2 = hash2(currentKey);
       }
 
-      output("Unable to insert key " + key + ". Maximum rehash attempts exceeded.");
+      output(`Unable to insert key ${key}. Maximum rehash attempts exceeded.`);
     }
 
     function lookup() {
       const key = parseInt(document.getElementById("key").value);
+      if (isNaN(key)) {
+        output("Please enter a valid number.");
+        return;
+      }
+
       const hashValue1 = hash1(key);
       const hashValue2 = hash2(key);
 
       if (table1[hashValue1] === key) {
-        output("Key " + key + " found at index " + hashValue1 + " in table 1.");
+        highlightRow("table1", hashValue1);
+        output(`Key ${key} found at index ${hashValue1} in table 1.`);
       } else if (table2[hashValue2] === key) {
-        output("Key " + key + " found at index " + hashValue2 + " in table 2.");
+        highlightRow("table2", hashValue2);
+        output(`Key ${key} found at index ${hashValue2} in table 2.`);
       } else {
-        output("Key " + key + " not found in the hash tables.");
+        output(`Key ${key} not found in the hash tables.`);
       }
     }
 
     function deleteKey() {
       const key = parseInt(document.getElementById("key").value);
+      if (isNaN(key)) {
+        output("Please enter a valid number.");
+        return;
+      }
+
       const hashValue1 = hash1(key);
       const hashValue2 = hash2(key);
 
       if (table1[hashValue1] === key) {
         table1[hashValue1] = null;
-        updateTable("table1", table1);
-        output("Deleted key " + key + " from index " + hashValue1 + " in table 1.");
+        updateTable("table1", table1, hashValue1);
+        output(`Deleted key ${key} from index ${hashValue1} in table 1.`);
       } else if (table2[hashValue2] === key) {
         table2[hashValue2] = null;
-        updateTable("table2", table2);
-        output("Deleted key " + key + " from index " + hashValue2 + " in table 2.");
+        updateTable("table2", table2, hashValue2);
+        output(`Deleted key ${key} from index ${hashValue2} in table 2.`);
       } else {
-        output("Key " + key + " not found in the hash tables.");
+        output(`Key ${key} not found in the hash tables.`);
       }
     }
 
-    function updateTable(tableId, table) {
+    function updateTable(tableId, table, animateIndex = -1) {
       const tableBody = document.getElementById(tableId);
       tableBody.innerHTML = "";
 
@@ -162,21 +318,33 @@
         indexCell.innerText = i;
         keyCell.innerText = table[i] !== null ? table[i] : "-";
 
+        if (i === animateIndex) {
+          row.classList.add("bounce");
+        }
+
         row.appendChild(indexCell);
         row.appendChild(keyCell);
-
         tableBody.appendChild(row);
       }
+    }
+
+    function highlightRow(tableId, index) {
+      const tableBody = document.getElementById(tableId);
+      const row = tableBody.children[index];
+      row.classList.add("highlight");
+      setTimeout(() => {
+        row.classList.remove("highlight");
+      }, 1000);
     }
 
     function output(message) {
       const outputDiv = document.getElementById("output");
       outputDiv.innerHTML = message;
+      outputDiv.classList.remove("fade");
+      void outputDiv.offsetWidth; // reflow trick
+      outputDiv.classList.add("fade");
     }
-  </script>
 
-  <script>
-    // Prompt user for table size and initialize the tables
     const inputTableSize = parseInt(prompt("Enter the table size:"));
     if (isNaN(inputTableSize) || inputTableSize <= 0) {
       alert("Invalid table size. Using default size of 10.");
@@ -185,5 +353,6 @@
       initializeTables(inputTableSize);
     }
   </script>
+
 </body>
 </html>
